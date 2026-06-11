@@ -151,7 +151,7 @@
         <tr class="${r.url ? "row-link" : ""}" ${r.url ? `data-url="${escapeHtml(r.url)}"` : ""} title="${r.url ? "点击在新标签页打开工作项" : ""}">
           <td>${escapeHtml(r.projectName)}</td>
           <td class="col-id">${escapeHtml(r.serialNumber || "")}</td>
-          <td class="col-subject">${escapeHtml(r.subject || "")}</td>
+          <td class="col-subject" title="${escapeHtml(r.subject || "")}">${escapeHtml(r.subject || "")}</td>
           <td>${escapeHtml(r.type || "")}</td>
           <td><span class="badge ${badgeClass(r.status)}">${escapeHtml(r.status || "")}</span></td>
           <td>${escapeHtml(r.owner || "")}</td>
@@ -345,18 +345,20 @@
   }
 
   // 拉取单个类别到 state.data[category]。「测试」走 testhub 接口，其余走 workitem 接口。
+  // N 个项目并发拉取（每个项目内部分页仍是顺序的）。
   async function fetchCategoryIntoState(category, force) {
     if (!force && state.data[category]) return;
+    const lists = await Promise.all(
+      PROJECTS.map((proj) =>
+        category === "Test" ? fetchAllTestPlans(proj.id) : fetchAllWorkitems(proj.id, category)
+      )
+    );
     const result = {};
     const merge = [];
-    for (const proj of PROJECTS) {
-      setStatus(`加载 ${proj.name} 的 ${CATEGORY_LABEL[category]}…`);
-      result[proj.id] =
-        category === "Test"
-          ? await fetchAllTestPlans(proj.id)
-          : await fetchAllWorkitems(proj.id, category);
-      merge.push(...result[proj.id]);
-    }
+    PROJECTS.forEach((proj, i) => {
+      result[proj.id] = lists[i];
+      merge.push(...lists[i]);
+    });
     state.data[category] = result;
     await mergeSeenMembers(extractMembers(merge));
   }
@@ -371,7 +373,7 @@
 
     try {
       if (category === "All") {
-        for (const c of SINGLE_CATEGORIES) await fetchCategoryIntoState(c, force);
+        await Promise.all(SINGLE_CATEGORIES.map((c) => fetchCategoryIntoState(c, force)));
         const merged = {};
         for (const proj of PROJECTS) {
           merged[proj.id] = SINGLE_CATEGORIES.flatMap((c) => (state.data[c] && state.data[c][proj.id]) || []);

@@ -436,6 +436,11 @@ td {
   padding: 9px 12px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
+  /* 所有单元格不换行，超出部分省略号截断（标题列 title 属性可悬停看全文） */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
 }
 tbody tr:hover { background: var(--surface-soft); }
 tbody tr:last-child td { border-bottom: none; }
@@ -445,7 +450,7 @@ tbody tr.row-link:hover { background: var(--primary-soft); }
 tbody tr.row-link:hover td.col-subject { color: var(--primary); }
 
 td.col-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text-muted); font-size: 12px; }
-td.col-subject { max-width: 360px; }
+td.col-subject { max-width: 420px; }
 
 .badge {
   display: inline-flex;
