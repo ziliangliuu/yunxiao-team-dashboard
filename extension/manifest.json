@@ -1,14 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "SEG 部门工作统计",
-  "version": "0.15.0",
+  "name": "工作统计",
+  "version": "0.16.0",
   "description": "查看 devops 工作空间下所有项目的月度工作统计（全部/需求/任务/测试/缺陷）",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "permissions": ["webRequest", "storage", "cookies"],
   "host_permissions": ["https://devops.aliyun.com/*"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "打开 SEG 工作统计"
+    "default_title": "打开工作统计",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   }
 }
