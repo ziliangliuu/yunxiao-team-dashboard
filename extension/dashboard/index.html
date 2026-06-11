@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>仪表盘 · SEG 工作看板</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo">S</div>
+        SEG 工作看板
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="active">仪表盘</a>
+        <a href="members.html">成员设置</a>
+      </nav>
+      <div class="spacer"></div>
+      <span id="statusText" class="status-text"></span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <div class="tabs-inner" id="tabs">
+      <button class="tab active" data-category="All">全部</button>
+      <button class="tab" data-category="Req">需求</button>
+      <button class="tab" data-category="Task">任务</button>
+      <button class="tab" data-category="Test">测试</button>
+      <button class="tab" data-category="Bug">缺陷</button>
+    </div>
+  </nav>
+
+  <section class="filter-bar">
+    <div class="filter-bar-inner">
+      <label class="field">迭代
+        <select id="sprintFilter"><option value="">加载中…</option></select>
+      </label>
+      <label class="field">完成状态
+        <select id="statusFilter">
+          <option value="all">全部</option>
+          <option value="unclosed">未关闭</option>
+          <option value="finished">已完成</option>
+          <option value="cancelled">已取消 / 异常结束</option>
+        </select>
+      </label>
+      <label class="field">责任人
+        <select id="ownerFilter"><option value="all">全部</option></select>
+      </label>
+      <div class="spacer"></div>
+      <button id="refreshBtn" class="btn btn-primary" type="button">刷新</button>
+    </div>
+  </section>
+
+  <main class="content">
+    <section class="cards" id="cards"></section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">状态分布 <span id="filterScopeBadge" class="muted"></span></h2>
+      </div>
+      <div class="charts" id="charts"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">明细列表 <span id="tableSummary" class="muted"></span></h2>
+      </div>
+      <div class="table-wrap">
+        <table id="detailTable">
+          <thead>
+            <tr>
+              <th class="sortable" data-key="projectName">项目<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="serialNumber">编号<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="subject">标题<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="type">类型<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="status">状态<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="owner">负责人<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="sprint">迭代<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="createdAt">创建时间<span class="sort-indicator">↕</span></th>
+              <th class="sortable" data-key="finishedAt">完成时间<span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- 可选的本地私有配置（gitignored），不存在时报 404 但不影响功能 -->
+  <script src="config.local.js"></script>
+  <script src="api.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

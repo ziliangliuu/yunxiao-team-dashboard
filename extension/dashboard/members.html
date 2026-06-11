@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>成员设置 · SEG 工作看板</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo">S</div>
+        SEG 工作看板
+      </div>
+      <nav class="nav">
+        <a href="index.html">仪表盘</a>
+        <a href="members.html" class="active">成员设置</a>
+      </nav>
+      <div class="spacer"></div>
+      <span id="statusText" class="status-text"></span>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">组员选择 <span id="selectedCount" class="muted"></span></h2>
+        <div class="controls">
+          <button class="btn btn-ghost" id="selectAllBtn" type="button">全选</button>
+          <button class="btn btn-ghost" id="invertBtn" type="button">反选</button>
+          <button class="btn btn-ghost" id="clearBtn" type="button">清空</button>
+          <button class="btn btn-ghost" id="resetBtn" type="button">恢复默认 6 人</button>
+          <button class="btn btn-primary" id="saveBtn" type="button">💾 保存</button>
+        </div>
+      </div>
+
+      <div class="hint-box">
+        <span>ℹ️</span>
+        <span>所有页面（卡片 / 图表 / 表格）按勾选成员的<b>负责人</b>（assignedTo）字段过滤。成员列表自动从加载过的工作项里聚合，首次使用请先打开「仪表盘」加载一次数据。</span>
+      </div>
+
+      <div class="members-toolbar">
+        <input type="text" id="searchInput" placeholder="搜索姓名…" />
+      </div>
+
+      <div id="emptyHint" class="empty" style="display:none">
+        当前未发现成员数据。请先打开「仪表盘」加载一次工作项数据，扩展会自动从中提取出现过的成员。
+      </div>
+
+      <div class="members-grid" id="membersGrid"></div>
+    </section>
+  </main>
+
+  <script src="config.local.js"></script>
+  <script src="api.js"></script>
+  <script src="members.js"></script>
+</body>
+</html>
