@@ -12,7 +12,7 @@
 ## 使用
 
 1. 浏览器登录 [devops.aliyun.com](https://devops.aliyun.com) 并确保停留在自己的工作空间
-2. **任意打开一个项目页**（例如 `https://devops.aliyun.com/projex/project/<projectId>/req`），让扩展抓到一次 API 请求 —— `background.js` 会自动把 `x-csrf-token` 和 `last-workspace` 写到 session storage
+2. 不需要其他操作 —— 打开仪表盘时扩展会自动获取 csrf-token 和工作空间 ID（鉴权自举）
 3. 点 Chrome 工具栏中的扩展图标 → 仪表盘新标签页打开
 4. 顶部切 Tab（全部 / 需求 / 任务 / 测试 / 缺陷，打开默认「全部」）/ 选迭代（默认"全部"）/ 完成状态 / 责任人；点表头排序；点行直接跳到工作项详情
 
@@ -26,7 +26,7 @@
 
 ## 报错处理
 
-- **"尚未捕获到 csrf-token"** → 刷新一次 devops 项目页面再回来点「刷新」
+- **"未检测到云效登录态"** → 浏览器登录 devops.aliyun.com 后回来点「刷新」
 - **"加载项目列表失败"** → 多半是登录态/权限不够。重登 devops 后再试
 - **接口 401/403** → 登录态过期，重新登录 devops 即可
 - **明细列表全空** → 检查"成员设置"里有没有选自己团队成员；状态栏选回"全部"

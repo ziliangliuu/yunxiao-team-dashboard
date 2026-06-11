@@ -29,7 +29,7 @@
     getSelectedMembers, mergeSeenMembers, extractMembers, isMemberItem, getOwnerName,
     getSprintNames, isClosedStage, isFinishedStage,
     fetchAllWorkitems, hasCsrfToken, fetchProjects,
-    fetchAllTestPlans, getOwnerNames,
+    fetchAllTestPlans, getOwnerNames, bootstrapAuth,
   } = window.SegApi;
 
   const NO_SPRINT = "<无迭代>";
@@ -448,9 +448,12 @@
   async function bootstrapAndLoad(force) {
     state.selectedMembers = await getSelectedMembers();
 
-    const ok = await hasCsrfToken();
+    // 主动自举：打开插件即获取 csrfToken/workspaceId，无需先访问云效页面。
+    // 「刷新」时强制重新获取（token 永远是新鲜的，顺带解决长时间不操作过期的问题）。
+    setStatus("获取云效登录态…");
+    const ok = await bootstrapAuth(force);
     if (!ok) {
-      setStatus("尚未捕获到 csrf-token，请先访问 devops.aliyun.com 任意项目页，再点「刷新」。", true);
+      setStatus("未检测到云效登录态：请先在浏览器登录 devops.aliyun.com，然后回来点「刷新」。", true);
       return;
     }
 

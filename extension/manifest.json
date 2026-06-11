@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SEG 部门工作统计",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "查看 devops 工作空间下所有项目的月度工作统计（全部/需求/任务/测试/缺陷）",
   "permissions": ["webRequest", "storage", "cookies"],
   "host_permissions": ["https://devops.aliyun.com/*"],

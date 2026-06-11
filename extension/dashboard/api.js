@@ -289,6 +289,37 @@ async function hasCsrfToken() {
   return !!stored.csrfToken;
 }
 
+async function saveAuthData(data) {
+  try {
+    await chrome.storage.session.set(data);
+  } catch (e) {
+    await chrome.storage.local.set(data);
+  }
+}
+
+// 主动自举鉴权：直接 fetch 云效 /projex 页面（带浏览器 cookie），
+// csrfToken 和 workspaceId 都是服务端渲染在 HTML 里的，每次请求都返回新 token。
+// 这样打开插件即可用，无需先访问云效页面让 background 被动抓包（background 抓包保留为兜底）。
+// 返回 false = 未登录（HTML 里没有 token，比如被重定向到登录页）。
+async function bootstrapAuth(force = false) {
+  if (!force && (await hasCsrfToken())) return true;
+  try {
+    const res = await fetch(`${DEVOPS_BASE}/projex`, { credentials: "include" });
+    const html = await res.text();
+    const csrf = html.match(/csrfToken["']?\s*[:=]\s*["']([^"']{8,})["']/);
+    if (!csrf) return false;
+    const data = { csrfToken: csrf[1], capturedAt: Date.now() };
+    const ws = html.match(/(?:organizationId|workspaceId|orgId|lastWorkspace)["']?\s*[:=]\s*["']([0-9a-f]{24})["']/);
+    if (ws) data.workspaceId = ws[1];
+    await saveAuthData(data);
+    console.log("[seg] bootstrapAuth ok, csrf:", csrf[1].slice(0, 8) + "...", "ws:", data.workspaceId || "(none)");
+    return true;
+  } catch (e) {
+    console.warn("[seg] bootstrapAuth failed", e);
+    return false;
+  }
+}
+
 window.SegApi = {
   PROJECTS, CATEGORY_LABEL, DEFAULT_TEAM,
   // members
@@ -299,5 +330,5 @@ window.SegApi = {
   getSprintNames, isClosedStage, isFinishedStage,
   // api
   fetchAllWorkitems, countWorkitems, hasCsrfToken, fetchProjects,
-  fetchAllTestPlans,
+  fetchAllTestPlans, bootstrapAuth,
 };
