@@ -21,36 +21,34 @@
     </div>
   </header>
 
-  <nav class="tabs">
-    <div class="tabs-inner" id="tabs">
-      <button class="tab active" data-category="All">全部</button>
-      <button class="tab" data-category="Req">需求</button>
-      <button class="tab" data-category="Task">任务</button>
-      <button class="tab" data-category="Test">测试</button>
-      <button class="tab" data-category="Bug">缺陷</button>
+  <div class="action-bar">
+    <div class="action-bar-inner">
+      <div class="tabs-group" id="tabs">
+        <button class="tab active" data-category="All">全部</button>
+        <button class="tab" data-category="Req">需求</button>
+        <button class="tab" data-category="Task">任务</button>
+        <button class="tab" data-category="Test">测试</button>
+        <button class="tab" data-category="Bug">缺陷</button>
+      </div>
+      <div class="filter-group">
+        <label class="field">迭代
+          <select id="sprintFilter"><option value="">加载中…</option></select>
+        </label>
+        <label class="field">完成状态
+          <select id="statusFilter">
+            <option value="all">全部</option>
+            <option value="unclosed">未关闭</option>
+            <option value="finished">已完成</option>
+            <option value="cancelled">已取消 / 异常结束</option>
+          </select>
+        </label>
+        <label class="field">责任人
+          <select id="ownerFilter"><option value="all">全部</option></select>
+        </label>
+        <button id="refreshBtn" class="btn btn-primary" type="button">刷新</button>
+      </div>
     </div>
-  </nav>
-
-  <section class="filter-bar">
-    <div class="filter-bar-inner">
-      <label class="field">迭代
-        <select id="sprintFilter"><option value="">加载中…</option></select>
-      </label>
-      <label class="field">完成状态
-        <select id="statusFilter">
-          <option value="all">全部</option>
-          <option value="unclosed">未关闭</option>
-          <option value="finished">已完成</option>
-          <option value="cancelled">已取消 / 异常结束</option>
-        </select>
-      </label>
-      <label class="field">责任人
-        <select id="ownerFilter"><option value="all">全部</option></select>
-      </label>
-      <div class="spacer"></div>
-      <button id="refreshBtn" class="btn btn-primary" type="button">刷新</button>
-    </div>
-  </section>
+  </div>
 
   <main class="content">
     <section class="cards" id="cards"></section>
