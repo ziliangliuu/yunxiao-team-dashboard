@@ -29,7 +29,7 @@
     getSelectedMembers, mergeSeenMembers, extractMembers, isMemberItem, getOwnerName,
     getSprintNames, isClosedStage, isFinishedStage,
     fetchAllWorkitems, hasCsrfToken, fetchProjects,
-    fetchAllTestPlans, getOwnerNames, bootstrapAuth,
+    fetchAllTestPlans, getOwnerNames, getParticipantNames, getPersonNames, bootstrapAuth,
   } = window.SegApi;
 
   const NO_SPRINT = "<无迭代>";
@@ -142,7 +142,7 @@
     });
 
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="9" class="empty">没有符合条件的工作项</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" class="empty">没有符合条件的工作项</td></tr>`;
       return;
     }
     tbody.innerHTML = rows
@@ -155,6 +155,7 @@
           <td>${escapeHtml(r.type || "")}</td>
           <td><span class="badge ${badgeClass(r.status)}">${escapeHtml(r.status || "")}</span></td>
           <td>${escapeHtml(r.owner || "")}</td>
+          <td class="col-participants" title="${escapeHtml(r.participants || "")}">${escapeHtml(r.participants || "")}</td>
           <td>${escapeHtml(r.sprint || "")}</td>
           <td>${r.createdDisplay}</td>
           <td>${r.finishedDisplay}</td>
@@ -197,7 +198,7 @@
   }
   function passesOwner(it) {
     if (state.owner === ALL) return true;
-    return getOwnerNames(it).includes(state.owner); // 测试计划可能有多个负责人
+    return getPersonNames(it).includes(state.owner); // 负责人∪参与人；测试计划可能有多个负责人
   }
 
   function computeForProject(items) {
@@ -228,6 +229,7 @@
           type: getWorkitemType(it),
           status: getStatusName(it),
           owner: getOwnerName(it),
+          participants: getParticipantNames(it).join("、"),
           sprint: getSprintNames(it).join("、") || "—",
           createdAt: it.gmtCreate || 0,
           finishedAt: it.finishTime || 0,
@@ -292,13 +294,14 @@
     sel.innerHTML = opts.join("");
   }
 
-  // 责任人下拉的候选名单：配置了成员名单用名单；名单为空（不过滤）时从当前数据聚合
+  // 责任人下拉的候选名单：配置了成员名单用名单；名单为空（不过滤）时从当前数据聚合。
+  // 筛选口径是 负责人∪参与人，故候选名单也聚合两者（只当参与人的人也能被选中）。
   function ownerCandidates() {
     if (state.selectedMembers.length > 0) return state.selectedMembers.slice();
     const set = new Set();
     const byProj = state.data[state.category] || {};
     for (const projId of Object.keys(byProj)) {
-      for (const it of byProj[projId]) getOwnerNames(it).forEach((n) => set.add(n));
+      for (const it of byProj[projId]) getPersonNames(it).forEach((n) => set.add(n));
     }
     return [...set].sort((a, b) => a.localeCompare(b, "zh-CN"));
   }

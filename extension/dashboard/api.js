@@ -69,6 +69,8 @@ function extractMembers(items) {
     add(it?.assignedToUser);
     add(it?.creator);
     add(it?.modifier);
+    const parts = it && it["ak.issue.member"]; // 参与人（参与者）
+    if (Array.isArray(parts)) for (const u of parts) add(u);
   }
   return [...map.values()];
 }
@@ -89,9 +91,27 @@ function getOwnerName(it) {
   return getOwnerNames(it).join("、");
 }
 
+// ---------- 参与人（云效系统字段「参与者」 ak.issue.member）----------
+// 工作项列表响应里平铺在顶层 key "ak.issue.member"，是用户对象数组（可能为空或缺失）。
+// 测试计划没有参与人概念，转换形状里不含该字段，自然返回 []。
+function getParticipantNames(it) {
+  const arr = it && it["ak.issue.member"];
+  if (!Array.isArray(arr)) return [];
+  return arr.map((u) => u && (u.displayName || u.realName)).filter(Boolean);
+}
+
+// 负责人 ∪ 参与人（去重）。成员过滤与「责任人」筛选都按这个口径匹配：
+// 选中某人时，ta 是负责人或参与人之一即命中。
+function getPersonNames(it) {
+  const set = new Set();
+  for (const n of getOwnerNames(it)) set.add(n);
+  for (const n of getParticipantNames(it)) set.add(n);
+  return [...set];
+}
+
 function isMemberItem(it, selected) {
   if (!selected || selected.length === 0) return true; // 名单为空 = 不过滤，展示全部人员
-  return getOwnerNames(it).some((n) => selected.includes(n));
+  return getPersonNames(it).some((n) => selected.includes(n));
 }
 
 // ---------- 工作项语义 ----------
@@ -325,7 +345,7 @@ window.SegApi = {
   // members
   getSelectedMembers, setSelectedMembers,
   getSeenMembers, mergeSeenMembers, extractMembers, isMemberItem,
-  getOwnerName, getOwnerNames,
+  getOwnerName, getOwnerNames, getParticipantNames, getPersonNames,
   // semantic
   getSprintNames, isClosedStage, isFinishedStage,
   // api
